@@ -1,25 +1,42 @@
 #!/usr/bin/env python3
 import sys
 
+
 class NotNumberError(ValueError):
     """
-    A custom error to be raised when the argv is not an int
+    Raised when a command-line argument cannot be converted to int.
     """
     pass
 
 
 def error_checker(argv: str, index: int) -> None:
+    """Validate that an argument is an integer.
+
+    Args:
+        arg: Raw command-line argument to validate.
+        index: Argument position in sys.argv (1-based for user arguments).
+
+    Raises:
+        NotNumberError: If arg is not a valid integer string.
+    """
     try:
         int(argv)
     except ValueError:
         raise NotNumberError(f"Oops, you typed '{argv}'"
                              f", all arguments must be numbers")
 
-def ft_mean(scores: list[int]) -> int:
+
+def ft_mean(scores: list[int]) -> float:
+    """
+    Return the arithmetic mean of a non-empty list of integers.
+    """
     return (sum(scores) / len(scores))
 
 
 def ft_score_analytics() -> None:
+    """
+    Parse scores from sys.argv and print basic descriptive statistics.
+    """
     print("=== Player Score Analytics ===")
     scores: list[int] = []
     for i in range(1, len(sys.argv)):
