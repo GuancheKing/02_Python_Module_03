@@ -2,7 +2,7 @@ def main() -> None:
     """Demonstrate set operations for tracking and analyzing achievements."""
     
     print("\033[32m=== \033[0mAchievement Tracker System \033[32m===\n")
-    alice = set({'first_kill', 'level_10', 'treasure_hunter', 'speed_demon'})
+    alice = {'first_kill', 'level_10', 'treasure_hunter', 'speed_demon'}
     print(f"Player alice achievements: {alice}")
     bob = {'first_kill', 'level_10', 'boss_slayer', 'collector'}
     print(f"Player bob achievements: {bob}")
@@ -20,11 +20,17 @@ def main() -> None:
     players = [alice, bob, charlie]
     rare = set()
     for p in players:
-        
-    only_alice = alice.difference(bob.union(charlie))
-    only_bob = bob.difference(alice.union(charlie))
-    only_charlie = charlie.difference(alice.union(bob))
-    rare = only_alice.union(only_bob.union(only_charlie))
+        others = set()
+        for q in players:
+            if q is not p:
+                others = others.union(q)
+        only_p = p.difference(others)
+        rare = rare.union(only_p)
+# Non-scalable approach (kept for reference):
+    # only_alice = alice.difference(bob.union(charlie))
+    # only_bob = bob.difference(alice.union(charlie))
+    # only_charlie = charlie.difference(alice.union(bob))
+    # rare = only_alice.union(only_bob.union(only_charlie))
     print(f"Rare achievements (1 player): {rare}\033[0m")
 
     print(f"\n\033[36mAlice vs Bob common: {alice.intersection(bob)}")
