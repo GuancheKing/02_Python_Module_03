@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys
+# import sys
 
 
 # --- PARSING (NOT REQUIRED BY SUBJECT / MAY BREAK "AUTHORIZED" RULES) ---
@@ -32,7 +32,10 @@ import sys
 # --- ORIGINAL VERSION (requires parsing, not strictly allowed by subject) ---
 #
 # def data_input() -> dict[str, int]:
-#     """Parse 'item:quantity' arguments and accumulate them into an inventory dict."""
+#       """
+#       Parse 'item:quantity' arguments and accumulate them into an inventory
+#       dict.
+#       """
 #     inventory = {}
 #
 #     for arg in sys.argv[1:]:
@@ -154,6 +157,7 @@ def item_categories(inventory: dict[str, int]) -> None:
 
 
 def dict_properties(inventory: dict[str, int]) -> None:
+    """Demonstrate dictionary operations such as keys, values & membership."""
     print("\n=== Dictionary Properties Demo ===")
     print(f"Dictionary keys: {inventory.keys()}")
     print(f"Dictionary values: {inventory.values()}")
@@ -161,6 +165,7 @@ def dict_properties(inventory: dict[str, int]) -> None:
 
 
 def main() -> None:
+    """Run the inventory system analysis workflow."""
     inventory = data_input()
     total_items = system_analysis(inventory)
     current(inventory, total_items)
