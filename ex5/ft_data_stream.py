@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from typing import Generator
 
 
@@ -109,7 +110,6 @@ def process_stream(n: int) -> None:
     event_count = 0
     high_lvl_count = 0
     treasure_count = 0
-
     lvl_up_count = 0
 
     print(f"Processing {n} game events...\n")

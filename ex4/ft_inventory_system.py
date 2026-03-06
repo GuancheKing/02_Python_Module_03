@@ -1,76 +1,30 @@
 #!/usr/bin/env python3
-# import sys
-
-
-# --- PARSING (NOT REQUIRED BY SUBJECT / MAY BREAK "AUTHORIZED" RULES) ---
-# def parse(string: str) -> tuple[str, int] | None:
-#     """Parse a 'key:value' argument into (key, value).
-#
-#     Return None and print an error if the format is invalid.
-#     """
-#     parts = string.split(":")
-#
-#     if len(parts) != 2:
-#         print("Error: arguments must follow the format key:value")
-#         return None
-#
-#     key = parts[0].strip()
-#     if not key:
-#         print("Error: missing key. Each pair must have a key")
-#         return None
-#
-#     try:
-#         value = int(parts[1].strip())
-#     except ValueError:
-#         print("Error: value must be a number")
-#         return None
-#
-#     return key, value
-# -----------------------------------------------------------------------
-
-
-# --- ORIGINAL VERSION (requires parsing, not strictly allowed by subject) ---
-#
-# def data_input() -> dict[str, int]:
-#       """
-#       Parse 'item:quantity' arguments and accumulate them into an inventory
-#       dict.
-#       """
-#     inventory = {}
-#
-#     for arg in sys.argv[1:]:
-#         result = parse(arg)
-#
-#         if result is None:
-#             continue
-#
-#         key, value = result
-#
-#         # Accumulate quantities: get current value (or 0 if missing)
-#         inventory[key] = inventory.get(key, 0) + value
-#
-#     return inventory
-#
-# -----------------------------------------------------------------------------
+import sys
 
 
 def data_input() -> dict[str, int]:
-    """Return a sample inventory dictionary for the exercise demo."""
-    return {
-        "sword": 1,
-        "potion": 5,
-        "shield": 2,
-        "armor": 3,
-        "helmet": 1
-    }
+    result = {}
+    for arg in sys.argv[1:]:
+        key = ""
+        value = 0
+        reading_value = False
+
+        for c in arg:
+            if c == ":":
+                reading_value = True
+            elif not reading_value:
+                key += c
+            else:
+                value = value * 10 + (ord(c) - ord('0'))
+        result[key] = value
+    return result
 
 
 def system_analysis(inventory: dict[str, int]) -> int:
     """Print basic inventory stats and return total item count."""
     print("=== Inventory System Analysis ===")
     if not inventory:
-        print("Error: No items provided")
-        return 0
+        raise ValueError("Error: No items provided")
 
     total_items = 0
     for value in inventory.values():
@@ -104,8 +58,7 @@ def inv_statistics(inventory: dict[str, int]) -> None:
     """Print most and least abundant items from the inventory."""
     print("\n=== Inventory Statistics ===")
     if not inventory:
-        print("No inventory statistics available (empty inventory).")
-        return
+        raise ValueError("No inventory statistics available (empty inventory).")
     most_item = None
     most_qty = None
     least_item = None
@@ -134,8 +87,7 @@ def item_categories(inventory: dict[str, int]) -> None:
     """Categorize inventory items by abundance using nested dictionaries."""
     print("\n=== Item Categories ===")
     if not inventory:
-        print("No items to categorize")
-        return
+        raise ValueError("No items to categorize")
 
     categories = {
         "Abundant": {},
@@ -167,11 +119,14 @@ def dict_properties(inventory: dict[str, int]) -> None:
 def main() -> None:
     """Run the inventory system analysis workflow."""
     inventory = data_input()
-    total_items = system_analysis(inventory)
-    current(inventory, total_items)
-    inv_statistics(inventory)
-    item_categories(inventory)
-    dict_properties(inventory)
+    try:
+        total_items = system_analysis(inventory)
+        current(inventory, total_items)
+        inv_statistics(inventory)
+        item_categories(inventory)
+        dict_properties(inventory)
+    except Exception as e:
+        print(f"{type(e)}: {e}")
 
 
 if __name__ == "__main__":
