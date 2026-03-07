@@ -15,7 +15,28 @@ def data_input() -> dict[str, int]:
             elif not reading_value:
                 key += c
             else:
-                value = value * 10 + (ord(c) - ord('0'))
+                if c == "0":
+                    value = 0
+                elif c == "1":
+                    value = 1
+                elif c == "2":
+                    value = 2
+                elif c == "3":
+                    value = 3
+                elif c == "4":
+                    value = 4
+                elif c == "5":
+                    value = 5
+                elif c == "6":
+                    value = 6
+                elif c == "7":
+                    value = 7
+                elif c == "8":
+                    value = 8
+                elif c == "9":
+                    value = 9
+                else:
+                    raise ValueError("Error: value must be an integer")
         result[key] = value
     return result
 
