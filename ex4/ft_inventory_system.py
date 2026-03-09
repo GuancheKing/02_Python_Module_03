@@ -2,41 +2,62 @@
 import sys
 
 
+def custom_atoi(num_str: str) -> int:
+    """
+    Convert a numeric string into an integer.
+
+    Raise ValueError if the string is empty or contains non-digit characters.
+    """
+    digits = {
+        '0': 0,
+        '1': 1,
+        '2': 2,
+        '3': 3,
+        '4': 4,
+        '5': 5,
+        '6': 6,
+        '7': 7,
+        '8': 8,
+        '9': 9
+    }
+    if not num_str:
+        raise ValueError("Error: value must be an integer")
+    value = 0
+    for c in num_str:
+        if c not in digits:
+            raise ValueError("Error: value must be an integer")
+        value = value * 10 + digits[c]
+    return value
+
+
 def data_input() -> dict[str, int]:
+    """
+    Parse command-line arguments into an inventory dictionary.
+
+    Each argument must follow the format 'item:quantity'.
+    """
     result = {}
     for arg in sys.argv[1:]:
         key = ""
-        value = 0
+        value_str = ""
         reading_value = False
+        colon_count = 0
 
         for c in arg:
             if c == ":":
+                colon_count += 1
+                if colon_count > 1:
+                    raise ValueError("Error: invalid item format")
                 reading_value = True
             elif not reading_value:
                 key += c
             else:
-                if c == "0":
-                    value = 0
-                elif c == "1":
-                    value = 1
-                elif c == "2":
-                    value = 2
-                elif c == "3":
-                    value = 3
-                elif c == "4":
-                    value = 4
-                elif c == "5":
-                    value = 5
-                elif c == "6":
-                    value = 6
-                elif c == "7":
-                    value = 7
-                elif c == "8":
-                    value = 8
-                elif c == "9":
-                    value = 9
-                else:
-                    raise ValueError("Error: value must be an integer")
+                value_str += c
+
+        if colon_count != 1 or key == "" or value_str == "":
+            raise ValueError("Error: invalid item format")
+
+        value = custom_atoi(value_str)
         result[key] = value
     return result
 
@@ -79,7 +100,9 @@ def inv_statistics(inventory: dict[str, int]) -> None:
     """Print most and least abundant items from the inventory."""
     print("\n=== Inventory Statistics ===")
     if not inventory:
-        raise ValueError("No inventory statistics available (empty inventory).")
+        raise ValueError(
+            "No inventory statistics available (empty inventory)."
+        )
     most_item = None
     most_qty = None
     least_item = None
@@ -100,8 +123,42 @@ def inv_statistics(inventory: dict[str, int]) -> None:
         if qty < least_qty:
             least_item = item
             least_qty = qty
-    print(f"Most abundant: {most_item} ({most_qty} units)")
-    print(f"Least abundant: {least_item} ({least_qty} units)")
+
+    if most_qty == 1:
+        most_unit = "unit"
+    else:
+        most_unit = "units"
+
+    if least_qty == 1:
+        least_unit = "unit"
+    else:
+        least_unit = "units"
+
+    print(f"Most abundant: {most_item} ({most_qty} {most_unit})")
+    print(f"Least abundant: {least_item} ({least_qty} {least_unit})")
+
+
+def suggestions(inventory: dict[str, int]) -> None:
+    """Print restocking suggestions for low-stock items."""
+    print("\n=== Management Suggestions ===")
+    restock = []
+    for item, qty in inventory.items():
+        if qty <= 1:
+            restock.append(item)
+
+    if not restock:
+        print("Restock needed: None")
+        return
+
+    formatted = ""
+    # Loop through the list using indexes (0, 1, 2, ...)
+    for i in range(len(restock)):
+        # Add the current item name to the string
+        formatted += restock[i]
+        # Check if this is NOT the last element in the list
+        if i < len(restock) - 1:
+            formatted += ", "
+    print(f"Restock needed: {formatted}")
 
 
 def item_categories(inventory: dict[str, int]) -> None:
@@ -130,24 +187,45 @@ def item_categories(inventory: dict[str, int]) -> None:
 
 
 def dict_properties(inventory: dict[str, int]) -> None:
-    """Demonstrate dictionary operations such as keys, values & membership."""
+    """Demonstrate dictionary keys, values and membership operations."""
     print("\n=== Dictionary Properties Demo ===")
-    print(f"Dictionary keys: {inventory.keys()}")
-    print(f"Dictionary values: {inventory.values()}")
+    keys_formatted = ""
+    count = 0
+    total = len(inventory)
+
+    for key in inventory.keys():
+        keys_formatted += key
+        count += 1
+        if count < total:
+            keys_formatted += ", "
+
+    print(f"Dictionary keys: {keys_formatted}")
+
+    count = 0
+    values_formatted = ""
+
+    for value in inventory.values():
+        values_formatted += f"{value}"
+        count += 1
+        if count < total:
+            values_formatted += ", "
+
+    print(f"Dictionary values: {values_formatted}")
     print(f"Sample lookup - 'sword' in inventory: {'sword' in inventory}")
 
 
 def main() -> None:
     """Run the inventory system analysis workflow."""
-    inventory = data_input()
     try:
+        inventory = data_input()
         total_items = system_analysis(inventory)
         current(inventory, total_items)
         inv_statistics(inventory)
         item_categories(inventory)
+        suggestions(inventory)
         dict_properties(inventory)
     except Exception as e:
-        print(f"{type(e)}: {e}")
+        print(f"{e}")
 
 
 if __name__ == "__main__":
